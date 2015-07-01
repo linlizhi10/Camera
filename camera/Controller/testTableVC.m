@@ -11,6 +11,7 @@
 #define iPhoneHeight [UIScreen mainScreen].bounds.size.height
 
 @interface testTableVC ()
+- (IBAction)testAction:(id)sender;
 
 @end
 
@@ -53,20 +54,26 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //static NSString *cellIdentifier = @"cellIdentifier";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellIdentifier" forIndexPath:indexPath];
-   
-    UILabel *name = (UILabel *)[cell viewWithTag:102];
-    name.text =  @"Storyboard是一项令人兴奋的功能，在iOS5中首次推出，在开发app的界面时可以极大地节省时间。 ";
-    [name sizeToFit];
-    UIImageView *iView = (UIImageView *)[cell viewWithTag:104];
+    static NSString *cellIdentifier = @"cellIdentifier";
+//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellIdentifier" forIndexPath:indexPath];
+//   
+//    UILabel *name = (UILabel *)[cell viewWithTag:102];
+//    name.text =  @"Storyboard是一项令人兴奋的功能，在iOS5中首次推出，在开发app的界面时可以极大地节省时间。 ";
+//    [name sizeToFit];
+//    UIImageView *iView = (UIImageView *)[cell viewWithTag:104];
     
-    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
     
         return cell;
 }
 
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -170,4 +177,12 @@
     
 }
 
+- (IBAction)testAction:(id)sender {
+    NSLog(@"button");
+    UIButton *button = (UIButton *)sender;
+    CGRect rect = CGRectMake(0,0, 200, 200);
+    button.backgroundColor = [UIColor blueColor];
+    [button setFrame:CGRectMake(10, 10, 200, 200)];
+    [self.view layoutSubviews];
+}
 @end

@@ -98,7 +98,12 @@ static NSString *SKFooterIdentifier = @"footer";
     [cell.contentView addSubview:iView];
     return cell;
 }
-
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"showPhoto"]) {
+        NSLog(@"show photo image");
+    }
+}
 //- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 //{
 //    NSLog(@"click");

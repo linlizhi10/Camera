@@ -5,11 +5,22 @@
 //  Created by skunk  on 15/3/4.
 //  Copyright (c) 2015年 linlizhi. All rights reserved.
 //
+/**
+ *  self.imageView.layer.cornerRadius = self.imageView.frame.size.width / 2; self.imageView.clipsToBounds = YES
+ 
+ 之前我们只要把上面两句放在layoutSubviews: 方法中设置即可，因为在layoutSubviews: 方法中，我们可以设置子控件的frame。但是一旦我们使用的AutoLayout适配后，在这个方法中就不能获得子控件的真实frame，因为在此时，AutoLayout的适配并没有完成。那么这时我们就必须这么做了：
+ 
+ <span style="font-size:18px;">- (void)layoutSubviews { [super layoutSubviews]; // 不加这下面两句，，获得的尺寸会是xib里的未完成autolayout适配时的尺寸，storyboard同理（把这两句写在viewDidLoad:方法中，将contentView换成控制器的view） [self.contentView setNeedsLayout]; [self.contentView layoutIfNeeded]; // 这里可以提前获得autolayout完成后适配后的子控件的真实frame self.imageView.layer.cornerRadius = self.imageView.frame.size.width / 2; self.imageView.clipsToBounds = YES; NSLog(@"%@", NSStringFromCGRect(self.imageView.frame)); }</span>
+ 实际上，AutoLayout的适配是在调用N次（子控件个数）控制器的viewDidLayoutSubviews:方法后才完成的，在stackoverflow上也有人建议在此方法中做操作。但是如果像是自定义的cell这么去做，肯定不方便，再者关键是viewDidLayoutSubviews:会调用多次，会影响用户体验和性能。
+ *
+ */
 
 #import "ViewController.h"
 #import "PhotoShow.h"
 #import <AVFoundation/AVFoundation.h>
-@interface ViewController ()
+#import "LINImagePickerViewController.h"
+
+@interface ViewController ()<LINImagePickerFinishPicking>
 {
     //执行输入设备和输出设备之间的数据传递
     AVCaptureSession *_session;
@@ -35,6 +46,15 @@
     _savePhoto.hidden = YES;
     _arrPhotoName = [[NSMutableArray alloc]init];
     [self initialSession];
+    
+    [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
+    /**
+     *  这里就可以提前获得autolayout完成后适配后的子控件的真实frame
+     *
+     */
+    NSLog(@"width is %f",self.cameraView.frame.size.width);
+    self.cameraView.layer.cornerRadius = self.cameraView.frame.size.width / 8;
     
 }
 - (void)viewDidAppear:(BOOL)animated
@@ -195,6 +215,15 @@
         [alert show];
     
 }
+
+- (IBAction)pickImage:(id)sender {
+    
+    LINImagePickerViewController *imagePicker = [[LINImagePickerViewController alloc] init];
+    imagePicker.delegate = self;
+    
+    [self presentViewController:imagePicker animated:NO completion:nil];
+    
+}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
@@ -261,5 +290,12 @@
     NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject ];
     
     return rootPath;
+}
+- (void)linImagePickerFinishPickingWithArray:(NSArray *)arr
+{
+    NSLog(@"arr.count is %d",arr.count);
+    for (UIImage *image in arr) {
+        NSLog(@"image is %@",image);
+    }
 }
 @end

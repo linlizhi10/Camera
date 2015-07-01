@@ -29,6 +29,8 @@ typedef void(^finishBlock) (int a, int b);
 
 - (IBAction)saveThePhoto:(id)sender;
 
+- (IBAction)pickImage:(id)sender;
+
 @property (nonatomic, assign) finishBlock finish;
 @end
 

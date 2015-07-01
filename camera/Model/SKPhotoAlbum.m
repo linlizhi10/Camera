@@ -14,6 +14,10 @@
 @implementation SKPhotoAlbum
 - (void)getAllPhotos
 {
+    
+    _urlArray = [[NSMutableArray alloc] init];
+    _imageArray = [[NSMutableArray alloc] init];
+    
     /*
      　ALAssetsLibrary：代表整个PhotoLibrary，我们可以生成一个它的实例对象，这个实例对象就相当于是照片库的句柄。
      
@@ -23,10 +27,20 @@
      */
     ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc]init];//生成整个photoLibrary句柄的实例
     //NSMutableArray *mediaArray = [[NSMutableArray alloc]init];//存放media的数组
-    _urlArray = [[NSMutableArray alloc] init];
-    _imageArray = [[NSMutableArray alloc] init];
+    
+    /**
+     *  dispatch_semaphore_create 创建一个semaphore 信号总量
+     *  dispatch_semaphore_signal 发送一个信号 会让信号总量加1
+     *  dispatch_semaphore_wait   等待信号 当信号总量少于0的时候就会一直等待，否则
+     */
     dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+    /**
+     *  DISPATCH_QUEUE_SERIAL 串行队列，按顺序同步访问，可创建任意数量的串行队列，各个队列是并发的，
+     */
     dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
+    /**
+     *  异步执行
+     */
     dispatch_async(queue, ^{
         [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll
                                      usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
@@ -47,12 +61,12 @@
                                                  // NSLog(@"unknown AssetType");
                                              }
                                              
-                                             NSDictionary *assetUrls = [result valueForProperty:ALAssetPropertyURLs];
-                                             NSUInteger *assetCounter = 0;
-                                             for (NSString *assetURLKey in assetUrls) {
+                                             //NSDictionary *assetUrls = [result valueForProperty:ALAssetPropertyURLs];
+                                             //NSUInteger *assetCounter = 0;
+                                             //for (NSString *assetURLKey in assetUrls) {
                                                  //NSLog(@"Asset URL %lu = %@",(unsigned long)assetCounter,[assetUrls objectForKey:assetURLKey]);
-                                             }
-                                             NSLog(@"Representation size = %lld",[[result defaultRepresentation] size]);
+                                             //}
+                                             //NSLog(@"Representation size = %lld",[[result defaultRepresentation] size]);
                                          }];
                                          dispatch_semaphore_signal(sema);
                                          //[self parsePhoto];
@@ -73,13 +87,12 @@
     dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
     
     
-        NSLog(@"urlArray.count is %ld",[self.urlArray count]);
+        //NSLog(@"urlArray.count is %ld",[self.urlArray count]);
         for (NSString *iUrl in self.urlArray) {
          dispatch_async(queue, ^{
             NSURL *url = [NSURL URLWithString:iUrl];
             [assetLibrary assetForURL:url resultBlock:^(ALAsset *asset) {
                 UIImage *image = [UIImage imageWithCGImage:asset.thumbnail];
-                NSLog(@"image is %@",image);
                 
                 [_imageArray addObject:image];
                 
@@ -103,4 +116,5 @@
     
     NSLog(@"imageArray.count is %ld",_imageArray.count);
 }
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "LINImagePickerViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,12 +17,18 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     // Override point for customization after application launch.
     /**
      *  加载storyBoard
      */
 //    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"main" bundle:[NSBundle mainBundle]];
 //    self.window.rootViewController = [storyboard instantiateInitialViewController];
+#pragma mark------test
+    
+//    LINImagePickerViewController *linPicker = [[LINImagePickerViewController alloc] init];
+//    self.window.rootViewController = linPicker;
+    
     
     return YES;
 }

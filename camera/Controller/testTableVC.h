@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface testTableVC : UITableViewController
 @property (strong, nonatomic) IBOutlet UITableView *myTableView;
 @property (weak, nonatomic) IBOutlet UITableViewCell *myCell;
+
 
 @end
